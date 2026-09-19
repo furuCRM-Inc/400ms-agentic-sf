@@ -1,0 +1,494 @@
+/* ── Root ──────────────────────────────────────────────────────────────────── */
+:host {
+    display: block;
+    --bg:        #0d1117;
+    --surface:   #161b22;
+    --border:    #30363d;
+    --electric:  #00d4ff;
+    --purple:    #7c3aed;
+    --green:     #3fb950;
+    --red:       #ff3864;
+    --amber:     #e3b341;
+    --text:      #c9d1d9;
+    --text-dim:  #8b949e;
+    --json:      #f0883e;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+}
+
+.demo-root {
+    background: var(--bg);
+    color: var(--text);
+    padding: 28px 24px;
+    border-radius: 16px;
+    min-height: 600px;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────────── */
+.demo-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.header-bolt {
+    font-size: 48px;
+    animation: pulse-bolt 1.6s ease-in-out infinite;
+    display: block;
+}
+
+@keyframes pulse-bolt {
+    0%, 100% { transform: scale(1);    opacity: 1;    }
+    50%       { transform: scale(1.15); opacity: 0.85; }
+}
+
+.header-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 10px 0 6px;
+    background: linear-gradient(135deg, var(--electric) 0%, var(--purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-sub {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin: 0;
+    letter-spacing: 0.4px;
+}
+
+/* ── Panels ────────────────────────────────────────────────────────────────── */
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+}
+
+.panel-hdr {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+}
+
+.panel-icon {
+    font-size: 14px;
+}
+
+.tools-badge {
+    margin-left: auto;
+    background: rgba(124, 58, 237, 0.15);
+    color: var(--purple);
+    border: 1px solid rgba(124, 58, 237, 0.4);
+    border-radius: 12px;
+    padding: 2px 10px;
+    font-size: 11px;
+}
+
+/* ── Top grid ──────────────────────────────────────────────────────────────── */
+.top-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+/* ── Chat Panel ────────────────────────────────────────────────────────────── */
+.chat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.customer-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+.dot-red {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: blink 1s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+}
+
+.customer-name {
+    font-weight: 600;
+    color: var(--red);
+}
+
+.chat-bubble {
+    background: rgba(255, 56, 100, 0.08);
+    border: 1px solid rgba(255, 56, 100, 0.3);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 60px;
+    color: var(--text);
+}
+
+.cursor {
+    animation: blink-cursor 0.6s step-end infinite;
+    color: var(--electric);
+}
+
+@keyframes blink-cursor {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+}
+
+.chat-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.badge-critical {
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+.meta-label {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+/* ── Jev Panel ─────────────────────────────────────────────────────────────── */
+.jev-body {
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.json-block {
+    background: rgba(240, 136, 62, 0.06);
+    border: 1px solid rgba(240, 136, 62, 0.25);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--json);
+    margin: 0 0 10px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    animation: fade-in 0.3s ease;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0);   }
+}
+
+.jev-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bolt-small {
+    font-size: 16px;
+}
+
+.latency-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--electric);
+}
+
+.latency-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+.jev-idle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0;
+}
+
+.pulse-ring {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--electric);
+    animation: pulse-ring 1.4s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+    0%   { transform: scale(0.8); opacity: 1;   }
+    100% { transform: scale(1.8); opacity: 0;   }
+}
+
+.idle-label {
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+/* ── Tools Panel ───────────────────────────────────────────────────────────── */
+.tools-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.tool-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(0, 212, 255, 0.04);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    transition: all 0.3s ease;
+}
+
+.tool-card--exec {
+    background: rgba(227, 179, 65, 0.08);
+    border-color: rgba(227, 179, 65, 0.4);
+    animation: exec-pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes exec-pulse {
+    from { box-shadow: 0 0 0 0   rgba(227, 179, 65, 0.3); }
+    to   { box-shadow: 0 0 10px 2px rgba(227, 179, 65, 0.2); }
+}
+
+.tool-card--done {
+    background: rgba(63, 185, 80, 0.08);
+    border-color: rgba(63, 185, 80, 0.4);
+}
+
+.tool-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.tool-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.tool-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--electric);
+}
+
+.tool-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.4;
+}
+
+.code-snippet {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin: 0;
+    white-space: pre;
+    overflow-x: auto;
+}
+
+/* ── Timeline ──────────────────────────────────────────────────────────────── */
+.timeline-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.timeline-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.timeline-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--electric), var(--purple));
+    border-radius: 3px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.markers-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.timeline-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.marker-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.marker-dot--on {
+    background: var(--electric);
+    box-shadow: 0 0 8px var(--electric);
+}
+
+.marker-time {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.marker-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-align: center;
+}
+
+/* ── Action Log ────────────────────────────────────────────────────────────── */
+.log-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 160px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+    line-height: 1.5;
+    animation: fade-in 0.2s ease;
+}
+
+.log-time {
+    color: var(--electric);
+    flex-shrink: 0;
+    min-width: 56px;
+}
+
+.log-msg {
+    color: var(--text-dim);
+}
+
+/* ── Resolution ────────────────────────────────────────────────────────────── */
+.resolution-panel {
+    text-align: center;
+    border-color: rgba(63, 185, 80, 0.4);
+    background: rgba(63, 185, 80, 0.06);
+    animation: fade-in 0.4s ease;
+}
+
+.resolution-icon {
+    font-size: 40px;
+    margin-bottom: 8px;
+}
+
+.resolution-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--green);
+}
+
+.resolution-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin: 6px 0 14px;
+    letter-spacing: 0.5px;
+}
+
+.resolution-msg {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+    text-align: left;
+}
+
+/* ── CTA ───────────────────────────────────────────────────────────────────── */
+.cta-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn-run {
+    background: linear-gradient(135deg, var(--electric), var(--purple));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 32px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+    font-family: inherit;
+}
+
+.btn-run:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-run:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-reset {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+    font-family: inherit;
+}
+
+.btn-reset:hover {
+    border-color: var(--text-dim);
+    color: var(--text);
+}

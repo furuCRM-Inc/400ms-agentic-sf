@@ -1,0 +1,141 @@
+<template>
+    <div class="demo-root">
+
+        <!-- ── Header ─────────────────────────────────────────── -->
+        <div class="demo-header">
+            <div class="header-bolt">⚡</div>
+            <h1 class="header-title">The 400ms Agentic Salesforce</h1>
+            <p class="header-sub">Jev System 1 AI · WebMCP Direct UI Control · Zero screen-scraping</p>
+        </div>
+
+        <!-- ── Top grid: Chat + Jev ───────────────────────────── -->
+        <div class="top-grid">
+
+            <!-- Chat Panel -->
+            <div class="panel chat-panel">
+                <div class="panel-hdr">
+                    <span class="panel-icon">💬</span>
+                    <span>Live Chat — Service Cloud</span>
+                </div>
+                <div class="chat-body">
+                    <div class="customer-row">
+                        <span class="dot-red"></span>
+                        <span class="customer-name">VIP Customer — Enterprise Tier</span>
+                    </div>
+                    <div class="chat-bubble">
+                        <span>{displayedMessage}</span><span class="cursor" lwc:if={isRunning}>|</span>
+                    </div>
+                    <template lwc:if={chatReceived}>
+                        <div class="chat-meta">
+                            <span class="badge-critical">CRITICAL</span>
+                            <span class="meta-label">t = 0ms · $50,000 threat detected</span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Jev Decision Panel -->
+            <div class="panel jev-panel">
+                <div class="panel-hdr">
+                    <span class="panel-icon">🧠</span>
+                    <span>Jev — System 1 Reflex Engine</span>
+                </div>
+                <div class="jev-body">
+                    <template lwc:if={jevFired}>
+                        <pre class="json-block">{jevDecisionJson}</pre>
+                        <div class="jev-badge">
+                            <span class="bolt-small">⚡</span>
+                            <span class="latency-num">{jevLatency}ms</span>
+                            <span class="latency-sub">System 1 reflex · no token streaming</span>
+                        </div>
+                    </template>
+                    <template lwc:if={jevWaiting}>
+                        <div class="jev-idle">
+                            <div class="pulse-ring"></div>
+                            <span class="idle-label">Awaiting critical input...</span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── WebMCP Tools Panel ─────────────────────────────── -->
+        <div class="panel tools-panel">
+            <div class="panel-hdr">
+                <span class="panel-icon">🔧</span>
+                <span>WebMCP — Native Browser Tool Registration</span>
+                <span class="tools-badge">document.modelContext</span>
+            </div>
+            <div class="tools-grid">
+                <template for:each={registeredTools} for:item="tool">
+                    <div key={tool.id} class={tool.cardClass}>
+                        <span class="tool-icon">{tool.statusIcon}</span>
+                        <div class="tool-info">
+                            <div class="tool-name">{tool.name}</div>
+                            <div class="tool-desc">{tool.description}</div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <pre class="code-snippet">{webmcpCode}</pre>
+        </div>
+
+        <!-- ── Timeline ───────────────────────────────────────── -->
+        <div class="panel timeline-panel">
+            <div class="panel-hdr">
+                <span class="panel-icon">📊</span>
+                <span>Execution Timeline</span>
+            </div>
+            <div class="timeline-body">
+                <div class="timeline-track">
+                    <div class="timeline-fill" style={timelineStyle}></div>
+                </div>
+                <div class="markers-row">
+                    <template for:each={timelineMarkers} for:item="marker">
+                        <div key={marker.id} class="timeline-marker">
+                            <div class={marker.dotClass}></div>
+                            <div class="marker-time">{marker.time}</div>
+                            <div class="marker-label">{marker.label}</div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Action Log ─────────────────────────────────────── -->
+        <template lwc:if={hasLogs}>
+            <div class="panel log-panel">
+                <div class="panel-hdr">
+                    <span class="panel-icon">📋</span>
+                    <span>Action Log</span>
+                </div>
+                <div class="log-body">
+                    <template for:each={actionLog} for:item="entry">
+                        <div key={entry.id} class="log-entry">
+                            <span class="log-time">[{entry.time}ms]</span>
+                            <span class="log-msg">{entry.message}</span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- ── Resolution ─────────────────────────────────────── -->
+        <template lwc:if={isResolved}>
+            <div class="panel resolution-panel">
+                <div class="resolution-icon">✅</div>
+                <div class="resolution-title">Resolved in {totalTime}ms</div>
+                <div class="resolution-sub">Refund authorized · Case routed · Customer notified</div>
+                <div class="resolution-msg">{resolutionMessage}</div>
+            </div>
+        </template>
+
+        <!-- ── CTA ────────────────────────────────────────────── -->
+        <div class="cta-row">
+            <button class="btn-run" onclick={startDemo} disabled={isRunning}>▶ Run Demo</button>
+            <button class="btn-reset" onclick={resetDemo}>↺ Reset</button>
+        </div>
+
+    </div>
+</template>
