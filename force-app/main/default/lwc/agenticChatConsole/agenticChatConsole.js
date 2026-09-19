@@ -1,19 +1,10 @@
 import { LightningElement, track } from 'lwc';
-import processJevDecision    from '@salesforce/apex/VipRetentionController.processJevDecision';
-import approveRefund         from '@salesforce/apex/VipRetentionController.approveRefund';
-import routeToVipRetention   from '@salesforce/apex/VipRetentionController.routeToVipRetention';
+import processJevDecision        from '@salesforce/apex/VipRetentionController.processJevDecision';
+import approveRefund             from '@salesforce/apex/VipRetentionController.approveRefund';
+import routeToVipRetention       from '@salesforce/apex/VipRetentionController.routeToVipRetention';
 import generateReassuranceMessage from '@salesforce/apex/VipRetentionController.generateReassuranceMessage';
 
 const CUSTOMER_MSG = 'System down. Lost $50,000. Cancel my subscription and refund me NOW!';
-
-const JEV_DECISION = {
-    urgency: 'CRITICAL',
-    recommended_action: 'APPROVE_MAX_REFUND',
-    route_to: 'TIER_3_RETENTION',
-    confidence: 0.97,
-    threat_value: 50000,
-    sentiment_score: -0.94
-};
 
 const WEBMCP_SNIPPET = [
     '// LWC registers itself as a native browser tool',
@@ -44,31 +35,30 @@ const mkTools = () => [
 ];
 
 const mkMarkers = () => [
-    { id: 'm1', time: '0ms',   label: 'Chat received',  dotClass: 'marker-dot' },
-    { id: 'm2', time: '50ms',  label: 'Jev fires',      dotClass: 'marker-dot' },
-    { id: 'm3', time: '250ms', label: 'WebMCP executes', dotClass: 'marker-dot' },
-    { id: 'm4', time: '400ms', label: 'Resolved',        dotClass: 'marker-dot' }
+    { id: 'm1', time: '0ms',   label: 'Chat received',   dotClass: 'marker-dot' },
+    { id: 'm2', time: '50ms',  label: 'Jev fires',        dotClass: 'marker-dot' },
+    { id: 'm3', time: '250ms', label: 'WebMCP executes',  dotClass: 'marker-dot' },
+    { id: 'm4', time: '400ms', label: 'Resolved',         dotClass: 'marker-dot' }
 ];
 
 export default class AgenticChatConsole extends LightningElement {
 
-    // Reactive state
-    @track displayedMessage = '';
-    @track chatReceived     = false;
-    @track jevWaiting       = true;
-    @track jevFired         = false;
-    @track jevDecisionJson  = '';
-    @track jevLatency       = 0;
-    @track isResolved       = false;
-    @track isRunning        = false;
-    @track totalTime        = 0;
+    @track displayedMessage  = '';
+    @track chatReceived      = false;
+    @track jevWaiting        = true;
+    @track jevFired          = false;
+    @track jevDecisionJson   = '';
+    @track jevLatency        = 0;
+    @track jevSource         = '';          // 'jev-live' | 'simulated'
+    @track isResolved        = false;
+    @track isRunning         = false;
+    @track totalTime         = 0;
     @track resolutionMessage = '';
-    @track timelineProgress = 0;
-    @track actionLog        = [];
-    @track registeredTools  = mkTools();
-    @track timelineMarkers  = mkMarkers();
+    @track timelineProgress  = 0;
+    @track actionLog         = [];
+    @track registeredTools   = mkTools();
+    @track timelineMarkers   = mkMarkers();
 
-    // Static — shown in the code snippet panel
     webmcpCode = WEBMCP_SNIPPET;
 
     _timers    = [];
@@ -86,11 +76,10 @@ export default class AgenticChatConsole extends LightningElement {
         this._timers.forEach(t => clearTimeout(t));
     }
 
-    // ── WebMCP registration (no-op if browser doesn't support it) ──────────────
+    // ── WebMCP ─────────────────────────────────────────────────────────────────
 
     _registerWebMCPTools() {
         if (!window.modelContext) return;
-
         window.modelContext.registerTool({
             name: 'approve_refund',
             description: 'Processes instant retention refund for verified VIP complaints',
@@ -105,31 +94,23 @@ export default class AgenticChatConsole extends LightningElement {
             execute: async (args) =>
                 approveRefund({ amount: args.amount, caseId: args.caseId || 'VIP-001' })
         });
-
         window.modelContext.registerTool({
             name: 'route_to_vip_retention',
             description: 'Routes critical case to Tier-3 VIP retention team',
             inputSchema: {
                 type: 'object',
-                properties: {
-                    caseId: { type: 'string', description: 'Salesforce Case ID' }
-                },
+                properties: { caseId: { type: 'string' } },
                 required: ['caseId']
             },
-            execute: async (args) =>
-                routeToVipRetention({ caseId: args.caseId })
+            execute: async (args) => routeToVipRetention({ caseId: args.caseId })
         });
     }
 
     // ── Getters ────────────────────────────────────────────────────────────────
 
-    get hasLogs() {
-        return this.actionLog.length > 0;
-    }
-
-    get timelineStyle() {
-        return `width: ${this.timelineProgress}%`;
-    }
+    get hasLogs() { return this.actionLog.length > 0; }
+    get timelineStyle() { return `width: ${this.timelineProgress}%`; }
+    get isLive() { return this.jevSource === 'jev-live'; }
 
     // ── Demo execution ─────────────────────────────────────────────────────────
 
@@ -144,32 +125,61 @@ export default class AgenticChatConsole extends LightningElement {
             // ── Phase 1: Chat received (t = 0ms) ────────────────────────────
             await this._type(CUSTOMER_MSG);
             this.chatReceived = true;
-            this._log(0, 'Critical VIP chat received — sentiment: −0.94 — threat value: $50,000');
+            this._log(0, 'Critical VIP chat received — evaluating with Jev System One...');
             this._mark(0);
             this.timelineProgress = 8;
 
-            // ── Phase 2: Jev fires (t = 50ms) ───────────────────────────────
-            await this._wait(700);
-            this.jevWaiting       = false;
-            this.jevFired         = true;
-            this.jevLatency       = 50;
-            this.jevDecisionJson  = JSON.stringify(JEV_DECISION, null, 2);
-            this._log(50, 'Jev System 1 → APPROVE_MAX_REFUND | TIER_3_RETENTION (confidence: 97%)');
+            // ── Phase 2: Real Jev API call ───────────────────────────────────
+            // processJevDecision() calls TypeSafe AI POST /v1/systemone
+            // and returns the actual measured latency from the API.
+            await this._wait(300);
+            const jevStart  = Date.now();
+            const jevResult = await processJevDecision({ chatMessage: CUSTOMER_MSG });
+            const realMs    = jevResult.latency_ms || (Date.now() - jevStart);
+
+            this.jevWaiting     = false;
+            this.jevFired       = true;
+            this.jevLatency     = Math.round(realMs);
+            this.jevSource      = jevResult.source || 'simulated';
+
+            // Display the clean decision JSON (not the raw API envelope)
+            this.jevDecisionJson = JSON.stringify({
+                urgency:             jevResult.urgency,
+                recommended_action:  jevResult.recommended_action,
+                route_to:            jevResult.route_to,
+                confidence:          jevResult.confidence,
+                noul_critical:       jevResult.noul_critical,
+                urgency_score:       jevResult.urgency_score,
+                threat_value:        jevResult.threat_value,
+                sentiment_score:     jevResult.sentiment_score
+            }, null, 2);
+
+            const sourceLabel = this.isLive ? '⚡ Jev live API' : '⚡ simulated (add API key)';
+            this._log(
+                Math.round(realMs),
+                'Jev → ' + jevResult.recommended_action
+                    + ' | ' + jevResult.route_to
+                    + ' (confidence: ' + Math.round((jevResult.confidence || 0) * 100) + '%)'
+                    + ' — ' + sourceLabel
+            );
+            if (this.isLive) {
+                this._log(
+                    Math.round(realMs),
+                    'Jev tokens: ' + jevResult.input_tokens + ' in / '
+                        + jevResult.output_tokens + ' out (output FREE — no text generated)'
+                );
+            }
             this._mark(1);
             this.timelineProgress = 35;
 
-            // Optionally call real Apex Jev simulation (fire-and-forget for timing)
-            processJevDecision({ chatMessage: CUSTOMER_MSG }).catch(() => {});
-
-            // ── Phase 3: WebMCP tool calls (t = 250ms) ───────────────────────
-            await this._wait(600);
+            // ── Phase 3: WebMCP tool calls ────────────────────────────────────
+            await this._wait(500);
             this.registeredTools = this.registeredTools.map(t => ({
                 ...t, statusIcon: '⚡', cardClass: 'tool-card tool-card--exec'
             }));
             this._log(200, 'WebMCP → calling approve_refund(amount=50000, caseId="VIP-001")');
             this.timelineProgress = 58;
 
-            // Call real Apex approve
             const txn = await approveRefund({ amount: 50000, caseId: 'VIP-001' });
             await this._wait(200);
 
@@ -181,9 +191,8 @@ export default class AgenticChatConsole extends LightningElement {
             this._log(280, 'WebMCP → approve_refund ✅ SUCCESS | txn: ' + (txn.transactionId || 'REF-DEMO'));
             this.timelineProgress = 72;
 
-            // Call real Apex route
             await routeToVipRetention({ caseId: 'VIP-001' });
-            await this._wait(250);
+            await this._wait(200);
 
             this.registeredTools = this.registeredTools.map(t => ({
                 ...t, statusIcon: '✅', cardClass: 'tool-card tool-card--done'
@@ -192,12 +201,12 @@ export default class AgenticChatConsole extends LightningElement {
             this._mark(2);
             this.timelineProgress = 88;
 
-            // ── Phase 4: Resolution (t = 400ms) ─────────────────────────────
-            await this._wait(280);
-            const msg = await generateReassuranceMessage({ customerName: 'VIP Customer' });
-            this.totalTime        = 400;
+            // ── Phase 4: Resolution ───────────────────────────────────────────
+            await this._wait(250);
+            const msg        = await generateReassuranceMessage({ customerName: 'VIP Customer' });
+            this.totalTime   = 400;
             this.resolutionMessage = msg;
-            this.isResolved       = true;
+            this.isResolved  = true;
             this._log(400, 'Resolution complete — refund authorized, case routed, customer notified');
             this._mark(3);
             this.timelineProgress = 100;
@@ -215,7 +224,6 @@ export default class AgenticChatConsole extends LightningElement {
         this._cancelled = true;
         this._timers.forEach(t => clearTimeout(t));
         this._timers = [];
-        // Defer reset so in-flight microtasks can observe _cancelled = true
         setTimeout(() => {
             this._cancelled = false;
             this._reset(true);
@@ -231,6 +239,7 @@ export default class AgenticChatConsole extends LightningElement {
         this.jevFired          = false;
         this.jevDecisionJson   = '';
         this.jevLatency        = 0;
+        this.jevSource         = '';
         this.isResolved        = false;
         if (resetRunning) this.isRunning = false;
         this.totalTime         = 0;

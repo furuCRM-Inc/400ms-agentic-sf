@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>TypeSafe_API_Key</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>TypeSafe AI API key for Jev System One model</shortDescription>
+        <value>REPLACE_WITH_YOUR_TYPESAFE_API_KEY</value>
+    </labels>
+</CustomLabels>

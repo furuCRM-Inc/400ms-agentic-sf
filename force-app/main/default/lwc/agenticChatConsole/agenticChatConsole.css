@@ -225,6 +225,20 @@
     color: var(--text-dim);
 }
 
+.source-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+.source-badge--live {
+    background: rgba(63, 185, 80, 0.15);
+    color: var(--green);
+    border: 1px solid rgba(63, 185, 80, 0.4);
+}
+
 .jev-idle {
     display: flex;
     flex-direction: column;

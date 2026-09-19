@@ -46,7 +46,15 @@
                         <div class="jev-badge">
                             <span class="bolt-small">⚡</span>
                             <span class="latency-num">{jevLatency}ms</span>
-                            <span class="latency-sub">System 1 reflex · no token streaming</span>
+                            <template lwc:if={isLive}>
+                                <span class="source-badge source-badge--live">LIVE · typesafe.ai</span>
+                            </template>
+                            <template lwc:if={isLive}>
+                                <span class="latency-sub">real Jev API · POST /v1/systemone</span>
+                            </template>
+                            <template lwc:if={jevWaiting}>
+                                <span class="latency-sub">System 1 reflex · no token streaming</span>
+                            </template>
                         </div>
                     </template>
                     <template lwc:if={jevWaiting}>
