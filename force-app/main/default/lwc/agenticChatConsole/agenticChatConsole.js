@@ -111,6 +111,7 @@ export default class AgenticChatConsole extends LightningElement {
     get hasLogs() { return this.actionLog.length > 0; }
     get timelineStyle() { return `width: ${this.timelineProgress}%`; }
     get isLive() { return this.jevSource === 'jev-live'; }
+    get isSimulated() { return this.jevSource !== 'jev-live'; }
 
     // ── Demo execution ─────────────────────────────────────────────────────────
 

@@ -239,6 +239,12 @@
     border: 1px solid rgba(63, 185, 80, 0.4);
 }
 
+.source-badge--sim {
+    background: rgba(139, 148, 158, 0.15);
+    color: var(--text-dim);
+    border: 1px solid rgba(139, 148, 158, 0.3);
+}
+
 .jev-idle {
     display: flex;
     flex-direction: column;
